@@ -30,27 +30,35 @@ class TransactionReportParser(object):
     def __parser_creditcard_transaction(row, report):
         if len(row) != 27:
             raise ValueError('The expected parameter count for CreditCardTransaction parser is 27', len(row))
-        transaction = {'order_key': UUID(row[1]), 'order_reference': row[2], 'merchant_key': UUID(row[3]),
-                       'merchant_name': row[4], 'transaction_key': UUID(row[5]), 'transaction_key_to_acquirer': row[6],
-                       'transaction_reference': row[7], 'creditcard_brand': row[8], 'creditcard_number': row[9],
-                       'installment_count': int(row[10]) if len(row[10].strip()) > 0 else 0, 'acquirer_name': row[11],
-                       'status': row[12], 'amount_in_cents': long(row[13]) if len(row[13].strip()) > 0 else long(0),
-                       'iata_amount_in_cents': long(row[14]) if len(row[14].strip()) > 0 else long(0),
-                       'authorization_code': row[15], 'transaction_identifier': row[16],
-                       'unique_sequential_number': row[17],
-                       'authorized_amount_in_cents': long(row[18]) if len(row[18].strip()) > 0 else long(0),
-                       'captured_amount_in_cents': long(row[19]) if len(row[19].strip()) > 0 else long(0),
-                       'voided_amount_in_cents': long(row[20]) if len(row[20].strip()) > 0 else long(0),
-                       'refunded_amount_in_cents': long(row[21]) if len(row[21].strip()) > 0 else long(0),
-                       'acquirer_authorization_return_code': row[22],
-                       'authorized_date': datetime.strptime(row[23], "%Y-%m-%dT%H:%M:%S") if len(
-                           row[23].strip()) > 0 else None,
-                       'captured_date': datetime.strptime(row[24], "%Y-%m-%dT%H:%M:%S") if len(
-                           row[24].strip()) > 0 else None,
-                       'voided_date': datetime.strptime(row[25], "%Y-%m-%dT%H:%M:%S") if len(
-                           row[25].strip()) > 0 else None,
-                       'last_probe_date': datetime.strptime(row[26], "%Y-%m-%dT%H:%M:%S") if len(
-                           row[26].strip()) > 0 else None}
+        transaction = {
+            'order_key': UUID(row[1]),
+            'order_reference': row[2],
+            'merchant_key': UUID(row[3]),
+            'merchant_name': row[4],
+            'transaction_key': UUID(row[5]),
+            'transaction_key_to_acquirer': row[6],
+            'transaction_reference': row[7],
+            'creditcard_brand': row[8],
+            'creditcard_number': row[9],
+            'installment_count': int(row[10]) if len(row[10].strip()) > 0 else 0,
+            'acquirer_name': row[11],
+            'status': row[12],
+            'amount_in_cents': long(row[13]) if len(row[13].strip()) > 0 else long(0),
+            'iata_amount_in_cents': long(row[14]) if len(row[14].strip()) > 0 else long(0),
+            'authorization_code': row[15],
+            'transaction_identifier': row[16],
+            'unique_sequential_number': row[17],
+            'captured_amount_in_cents': long(row[19]) if len(row[19].strip()) > 0 else long(0),
+            'authorized_amount_in_cents': long(row[18]) if len(row[18].strip()) > 0 else long(0),
+            'voided_amount_in_cents': long(row[20]) if len(row[20].strip()) > 0 else long(0),
+            'refunded_amount_in_cents': long(row[21]) if len(row[21].strip()) > 0 else long(0),
+            'acquirer_authorization_return_code': row[22],
+            'authorized_date': datetime.strptime(row[23], "%Y-%m-%dT%H:%M:%S") if len(row[23].strip()) > 0 else None,
+            'captured_date': datetime.strptime(row[24], "%Y-%m-%dT%H:%M:%S") if len(row[24].strip()) > 0 else None,
+            'voided_date': datetime.strptime(row[25], "%Y-%m-%dT%H:%M:%S") if len(row[25].strip()) > 0 else None,
+            'last_probe_date': datetime.strptime(row[26], "%Y-%m-%dT%H:%M:%S") if len(row[26].strip()) > 0 else None
+        }
+        
         report['creditcard_transaction_collection'].append(transaction)
 
     @staticmethod
