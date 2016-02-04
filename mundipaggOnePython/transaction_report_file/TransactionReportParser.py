@@ -1,5 +1,6 @@
-from datetime import datetime
 from uuid import UUID
+
+from datetime import datetime
 
 
 class TransactionReportParser(object):
@@ -7,15 +8,16 @@ class TransactionReportParser(object):
         report = {
             'creditcard_transaction_collection': [],
             'online_debit_transaction_collection': [],
-            'boleto_transaction_collection': []
+            'boleto_transaction_collection': [],
+            'lines_with_wrong_size': [],
         }
 
         switch = {
-            '01': self.__parser_header,
-            '20': self.__parser_creditcard_transaction,
-            '40': self.__parser_online_debit_transaction,
-            '30': self.__parser_boleto_transaction,
-            '99': self.__parser_trailer
+            '01': (4, self.__parser_header),
+            '20': (27, self.__parser_creditcard_transaction),
+            '40': (16, self.__parser_online_debit_transaction),
+            '30': (18, self.__parser_boleto_transaction),
+            '99': (5, self.__parser_trailer),
         }
 
         lines = data.replace('\r', '').split('\n')
@@ -24,7 +26,12 @@ class TransactionReportParser(object):
             items_to_parse = line.split(',')
 
             if items_to_parse[0]:
-                switch[items_to_parse[0]](items_to_parse, report)
+                expected_length, method = switch[items_to_parse[0]]
+
+                if len(items_to_parse) == expected_length:
+                    method(items_to_parse, report)
+                else:
+                    report['lines_with_wrong_size'].append(items_to_parse)
 
         return report
 
@@ -43,6 +50,7 @@ class TransactionReportParser(object):
     @staticmethod
     def __parser_creditcard_transaction(row, report):
         if len(row) != 27:
+            report['lines_with_wrong_size'].append(row)
             raise ValueError('The expected parameter count for CreditCardTransaction parser is 27', len(row))
 
         transaction = {
