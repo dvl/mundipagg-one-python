@@ -1,4 +1,33 @@
+from enum import Enum
 from uuid import UUID
+
+
+class AddressTypeEnum(Enum):
+    Comercial = 1,
+    Residential = 2
+
+
+class AntiFraudAnalysisStatusEnum(Enum):
+    PendingFraudAnalysisRequirement = 1,
+    FraudAnalysisRequirementSent = 2,
+    Approved = 3,
+    Reproved = 4,
+    PendingManualAnalysis = 5,
+    NoTransactionToAnalyse = 6,
+    FraudAnalysisWithError = 7
+
+
+class CreditCardOperationEnum(Enum):
+    AuthOnly = 1,
+    AuthAndCapture = 2,
+    AuthAndCaptureWithDelay = 3
+
+
+class FrequencyEnum(Enum):
+    Weekly = 1,
+    Monthly = 2,
+    Yearly = 3,
+    Daily = 4
 
 
 def create_sale_request(**kwargs):
@@ -15,8 +44,8 @@ def create_sale_request(**kwargs):
             'RequestData': kwargs.get('request_data')
         }
         return request
-    else:
-        raise UserWarning('The request must contain at least one transaction')
+
+    raise ValueError('The request must contain at least one transaction')
 
 
 def boleto_transaction(amount_in_cents, **kwargs):
@@ -30,6 +59,7 @@ def boleto_transaction(amount_in_cents, **kwargs):
         'TransactionDateInMerchant': kwargs.get('transaction_date_in_merchant'),
         'Options': kwargs.get('options')
     }
+
     return transaction
 
 
@@ -44,6 +74,7 @@ def billing_address(**kwargs):
         'Complement': kwargs.get('complement'),
         'ZipCode': kwargs.get('zip_code')
     }
+
     return address
 
 
@@ -52,6 +83,7 @@ def boleto_transaction_options(currency_iso, days_to_add_in_boleto_expiration_da
         'DaysToAddInBoletoExpirationDate': days_to_add_in_boleto_expiration_date,
         'CurrencyIsoField': currency_iso
     }
+
     return options
 
 
@@ -66,11 +98,11 @@ def creditcard_transaction(amount_in_cents, creditcard, creditcard_operation='Au
         'TransactionReference': kwargs.get('transaction_reference'),
         'TransactionDateInMerchant': kwargs.get('transaction_date_in_merchant')
     }
+
     return transaction
 
 
-def creditcard(creditcard_number, creditcard_brand, exp_month, exp_year, holder_name, security_code,
-               billing_address=None):
+def creditcard(creditcard_number, creditcard_brand, exp_month, exp_year, holder_name, security_code, billing_address=None):
     card = {
         'CreditCardNumber': creditcard_number,
         'HolderName': holder_name,
@@ -80,14 +112,16 @@ def creditcard(creditcard_number, creditcard_brand, exp_month, exp_year, holder_
         'CreditCardBrand': creditcard_brand,
         'BillingAddress': billing_address
     }
+
     return card
-	
-	
+
+
 def creditcard_instant_buy(instant_buy_key, billing_address=None):
     card = {
         'InstantBuyKey': instant_buy_key or UUID("00000000-0000-0000-0000-000000000000"),
         'BillingAddress': billing_address
     }
+
     return card
 
 
@@ -103,6 +137,7 @@ def creditcard_transaction_options(**kwargs):
         'ExtendedLimitCode': kwargs.get('extended_limit_code'),
         'CurrencyIso': kwargs.get('currency_iso')
     }
+
     return options
 
 
@@ -114,6 +149,7 @@ def recurrency(frequency, interval, date_to_start_billing, recurrences, one_doll
         'Recurrences': recurrences,
         'OneDollarAuth': one_dollar_auth
     }
+
     return recurrency_dict
 
 
@@ -121,6 +157,7 @@ def order(order_reference):
     order_dict = {
         'OrderReference': order_reference
     }
+
     return order_dict
 
 
@@ -146,6 +183,7 @@ def buyer(document_number, document_type, name, person_type, **kwargs):
         "CreateDateInMerchant": kwargs.get('create_date_in_merchant'),
         "LastBuyerUpdateInMerchant": kwargs.get('last_buyer_update_in_merchant')
     }
+
     return buyer_dict
 
 
@@ -161,6 +199,7 @@ def buyer_address(**kwargs):
         'ZipCode': kwargs.get('zip_code'),
         'AddressType': kwargs.get('address_type')
     }
+
     return address
 
 
@@ -168,6 +207,7 @@ def merchant(merchant_reference):
     merchant_data = {
         "MerchantReference": merchant_reference
     }
+
     return merchant_data
 
 
@@ -178,6 +218,7 @@ def sale_options(**kwargs):
         'Retries': kwargs.get("retries"),
         'CurrencyIso': kwargs.get('currency_iso_field')
     }
+
     return options
 
 
@@ -188,6 +229,7 @@ def request_data(**kwargs):
         "Origin": kwargs.get('origin'),
         "SessionId": kwargs.get('session_id')
     }
+
     return data
 
 
@@ -200,6 +242,7 @@ def shopping_cart(**kwargs):
         "ShippingCompany": kwargs.get('shipping_company'),
         "ShoppingCartItemCollection": kwargs.get('shopping_cart_item_collection')
     }
+
     return cart
 
 
@@ -214,6 +257,7 @@ def delivery_address(**kwargs):
         'Complement': kwargs.get('complement'),
         'ZipCode': kwargs.get('zip_code')
     }
+
     return address
 
 
@@ -227,4 +271,54 @@ def shopping_cart_item(**kwargs):
         "TotalCostInCents": kwargs.get('total_cost_in_cents'),
         "UnitCostInCents": kwargs.get('unit_cost_in_cents')
     }
+
     return item
+
+
+def manage_sale_request(**kwargs):
+    request = {
+        'RequestKey': kwargs.get('request_key') or UUID("00000000-0000-0000-0000-000000000000"),
+        'CreditCardTransactionCollection': kwargs.get('creditcard_transaction_collection'),
+        'OrderKey': kwargs.get('order_key') or UUID("00000000-0000-0000-0000-000000000000")
+    }
+
+    return request
+
+
+def manage_creditcard_transaction(**kwargs):
+    transaction = {
+        'TransactionKey': kwargs.get('transaction_key') or UUID("00000000-0000-0000-0000-000000000000"),
+        'TransactionReference': kwargs.get('transaction_reference'),
+        'AmountInCents': kwargs.get('amount_in_cents') or 0
+    }
+
+    return transaction
+
+
+def retry_sale_request(**kwargs):
+    request = {
+        'RequestKey': kwargs.get('request_key') or UUID("00000000-0000-0000-0000-000000000000"),
+        'OrderKey': kwargs.get('order_key') or UUID("00000000-0000-0000-0000-000000000000"),
+        'Options': kwargs.get('retry_sale_options'),
+        'RetrySaleCreditCardTransactionCollection': kwargs.get('retry_sale_creditcard_transaction_collection')
+    }
+
+    return request
+
+
+def retry_sale_options(**kwargs):
+    options = {
+        'ExtendedLimitEnabled': kwargs.get('extended_limit_enabled'),
+        'ExtendedLimitCode': kwargs.get('extended_limit_code')
+    }
+
+    return options
+
+
+def retry_sale_creditcard_transaction(**kwargs):
+    transaction = {
+        'TransactionKey': kwargs.get('transaction_key'),
+        'SecurityCode': kwargs.get('security_code')
+    }
+
+    return transaction

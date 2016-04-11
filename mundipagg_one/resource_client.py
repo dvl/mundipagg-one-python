@@ -1,12 +1,61 @@
-# -*- coding: utf-8 -*-
 import json
+import requests
 import urlparse
+
+from abc import ABCMeta
 from uuid import UUID
 
-import requests
-from data_contracts import create_sale_request, sale_options, manage_sale_request, retry_sale_request
+from .ConfigurationUtility import ConfigurationUtility
+from .data_contracts import create_sale_request, sale_options, manage_sale_request, retry_sale_request
+from .enum_types import PlatformEnvironment
 
-from AbstractResource import AbstractResource
+
+class AbstractResource(object):
+    __metaclass__ = ABCMeta
+
+    def __init__(self, merchant_key=None, environment=None, http_content_type=None, resource_name=None, host_uri=None,
+                 configuration_utility=ConfigurationUtility()):
+        self.__configuration_utility = configuration_utility
+        if merchant_key is None:
+            merchant_key = self.__configuration_utility.merchant_key()
+
+        self.merchant_key = merchant_key
+        self.plataform_environment = environment
+        self.http_content_type = http_content_type
+
+        if host_uri is not None:
+            self.host_uri = host_uri
+        else:
+            self.host_uri = self.get_service_uri(environment)
+
+        self.resource_name = resource_name
+
+    def get_service_uri(self, environment):
+        switch_uri = {PlatformEnvironment.production: self.__configuration_utility.production_host_uri(),
+                      PlatformEnvironment.sandbox: self.__configuration_utility.sandbox_host_uri()}
+
+        return switch_uri.get(environment)
+
+
+class CreditCardResource(AbstractResource):
+
+    def __init__(self, merchant_key=None, environment=None, http_content_type=None, host_uri=None):
+        super(CreditCardResource, self).__init__(merchant_key, environment, http_content_type, "/CreditCard", host_uri)
+
+    def __get_instant_buy_data_implementation(self, key, identifier_name):
+        if identifier_name:
+            identifier_name = '/' + identifier_name
+
+        action_name = '/{0}{1}'.format(str(key), identifier_name)
+        request_headers = {"merchantKey": str(self.merchant_key), 'Content-Type': 'application/json', 'Accept': 'application/json'}
+
+        return requests.get(self.host_uri + self.resource_name + action_name, headers=request_headers)
+
+    def get_instant_buy_data(self, instant_bur_key):
+        return self.__get_instant_buy_data_implementation(instant_bur_key, '')
+
+    def get_instant_buy_data_with_buyer_key(self, buyer_key):
+        return self.__get_instant_buy_data_implementation(buyer_key, 'BuyerKey')
 
 
 class uuid_serialize(json.JSONEncoder):
