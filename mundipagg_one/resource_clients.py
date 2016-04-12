@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import requests
 import urlparse
@@ -5,7 +7,7 @@ import urlparse
 from abc import ABCMeta
 from uuid import UUID
 
-from .ConfigurationUtility import ConfigurationUtility
+from .configuration_utility import ConfigurationUtility
 from .data_contracts import create_sale_request, sale_options, manage_sale_request, retry_sale_request
 from .enum_types import PlatformEnvironment
 

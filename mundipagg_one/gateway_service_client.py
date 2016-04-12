@@ -1,5 +1,7 @@
-from mundipaggOnePython.ConfigurationUtility import ConfigurationUtility
-from resource_clients import SaleResource, CreditCardResource
+# -*- coding: utf-8 -*-
+
+from .configuration_utility import ConfigurationUtility
+from .resource_clients import SaleResource, CreditCardResource
 
 
 class GatewayServiceClient(object):

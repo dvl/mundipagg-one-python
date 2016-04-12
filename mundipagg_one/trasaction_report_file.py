@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import requests
 import urlparse
 
 from uuid import UUID
 from datetime import datetime
 
-from .ConfigurationUtility import ConfigurationUtility
+from .configuration_utility import ConfigurationUtility
 
 
 class TransactionReport(object):
