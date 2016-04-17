@@ -2,7 +2,10 @@
 
 import json
 import requests
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    from urllib import parse as urlparse
 
 from abc import ABCMeta
 from uuid import UUID
