@@ -3,12 +3,12 @@
 from enum import Enum
 
 
-class HttpContentTypeEnum(Enum):
+class HttpContentType(Enum):
     xml = 1,
     json = 2
 
 
-class ManageOperationEnum(Enum):
+class ManageOperation(Enum):
     Capture = 1,
     Cancel = 2
 
