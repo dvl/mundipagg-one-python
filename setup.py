@@ -3,19 +3,20 @@
 from setuptools import setup
 
 setup(
-    name='mundipagg_one_python',
+    name='mundipagg_one',
     version='2.0.0',
-    url='https://github.com/mundipagg/mundipagg-one-python',
+    url='https://github.com/dvl/mundipagg-one-python',
     license='Apache',
-    author='Newton Rocha',
-    author_email='nrocha@mundipagg.com',
+    author='André Luiz',
+    author_email='contato@xdvl.info',
     description='Sdk for integration with mundipagg payment api',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: Apache 2 License',
-        'Programming Language :: Python :: 2.7'
-        'Programming Language :: Python :: 3.5'
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',       
+        'Programming Language :: Python :: 3.5',    
         'Topic :: Gateway Integration :: SDK',
     ],
     install_requires=[
