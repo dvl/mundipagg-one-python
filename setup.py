@@ -19,6 +19,7 @@ setup(
         'Programming Language :: Python :: 3.5',    
         'Topic :: Gateway Integration :: SDK',
     ],
+    packages=find_packages(),
     install_requires=[
         'requests>=2.0.0',
         'enum34>=1.0.0',
